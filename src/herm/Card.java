@@ -20,4 +20,9 @@ public class Card {
     {
         return cardType;
     }
+
+    public String toString()
+    {
+        return String.format("%s", title);
+    }
 }

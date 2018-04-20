@@ -49,4 +49,9 @@ public class Player
 	//TODO: Handle printing Notebook
 	//TODO:
 
+	public String toString()
+	{
+		return String.format("Name: %s\tHand: %s\n", name, hand);
+	}
+
 }
