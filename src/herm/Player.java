@@ -1,11 +1,12 @@
 package herm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Player
 {
-	String[] nameOptions = {
+	private ArrayList<String> nameOptions = new ArrayList<>(Arrays.asList(
 			"Phineas",
 			"Ferb",
 			"Dr. Doof",
@@ -18,7 +19,7 @@ public class Player
 			"Jeremy",
 			"Stacy",
 			"Vanessa"
-	};
+	));
 
 	private String name;
 	private ArrayList<Card> hand;
@@ -32,7 +33,7 @@ public class Player
 
 	public Player (ArrayList<Card> h)
 	{
-		name = nameOptions[(new Random()).nextInt(nameOptions.length)];
+		name = nameOptions.get(new Random().nextInt(nameOptions.size()));
 		hand = h;
 	}
 

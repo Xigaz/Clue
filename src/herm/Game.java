@@ -16,7 +16,7 @@ public class Game
 		int handSize = initialDeck.size() / NUM_PLAYERS;
 		int extraCards = initialDeck.size() % NUM_PLAYERS;
 
-		for(int i = 0; i < NUM_PLAYERS-1; i++)
+		for(int i = 0; i < NUM_PLAYERS - 1; i++)
 		{
 			ArrayList<Card> newHand = (new ArrayList<>(initialDeck.subList(0, handSize + (extraCards > 0 ? extraCards-- : 0 ))));
 			initialDeck.removeAll(newHand);
@@ -24,7 +24,7 @@ public class Game
 		}
 		players.add(new Player(n, (new ArrayList<>(initialDeck.subList(0, handSize)))));
 
-		//System.out.println(players);
+		System.out.println(players);
 	}
 
 	private ArrayList<Card> buildDeck()
