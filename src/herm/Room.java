@@ -1,20 +1,20 @@
 package herm;
 
 public enum Room implements CardOptions {
-	STUDY("Study", Room.KITCHEN),
+	STUDY("Study", "Kitchen"),
 	LIBRARY("Library", null),
-	CONSERVATORY("Conservatory", Room.LOUNGE),
+	CONSERVATORY("Conservatory", "Lounge"),
 	HALL("Hall", null),
-	KITCHEN("Kitchen", Room.STUDY),
+	KITCHEN("Kitchen", "Study"),
 	BALLROOM("Ballroom", null),
 	DINING_ROOM("Dining Room", null),
-	LOUNGE("Lounge", Room.CONSERVATORY),
+	LOUNGE("Lounge", "Conservatory"),
 	BILLIARD_ROOM("Billiard Room", null);
 
 	private final String printName;
-	private final Room passageExit;
+	private final String passageExit;
 
-	private Room (String n, Room exit)
+	private Room (String n, String exit)
 	{
 		printName = n;
 		passageExit = exit;
@@ -23,7 +23,7 @@ public enum Room implements CardOptions {
 
 	public Room getPassageExit()
 	{
-		return passageExit;
+		return valueOf(passageExit);
 	}
 
 	public String toString()
