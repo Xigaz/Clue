@@ -27,7 +27,7 @@ public class Main {
             Suspect suspectSelection = Suspect.values()[input.nextInt()-1];
             input.nextLine();
 
-            System.out.println("Let's get going!");
+            System.out.println("\nLet's get going!\n");
 
             Game myGame = new Game(name, suspectSelection);
             myGame.play();

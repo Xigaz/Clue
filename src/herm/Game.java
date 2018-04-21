@@ -32,7 +32,7 @@ public class Game
 			players.add(new Player(newHand));
 		}
 		System.out.println(players);
-		System.out.println(initialDeck);
+		//System.out.println(initialDeck);
 	}
 
 	private void makeConfidentialCards(ArrayList<Card> cards)
