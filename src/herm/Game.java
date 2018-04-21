@@ -7,24 +7,41 @@ public class Game
 {
 	private ArrayList<Player> players;
 	private final int NUM_PLAYERS = 5;
+	private ArrayList<Card> confidentialCards;
 
-	public Game(String n)
+	public Game(String n, Suspect s)
 	{
+		confidentialCards = new ArrayList<>();
 		players = new ArrayList<>();
+		Player.resetNameOptions();
+		Player.resetSuspectOptions();
+
 
 		ArrayList<Card> initialDeck = buildDeck();
+		makeConfidentialCards(initialDeck);
 		int handSize = initialDeck.size() / NUM_PLAYERS;
 		int extraCards = initialDeck.size() % NUM_PLAYERS;
 
+		players.add(new Player(n, s, (new ArrayList<>(initialDeck.subList(0, handSize + (extraCards-- > 0 ? 1 : 0 ))))));
+		initialDeck.removeAll(players.get(players.size()-1).getHand());
+
 		for(int i = 0; i < NUM_PLAYERS - 1; i++)
 		{
-			ArrayList<Card> newHand = (new ArrayList<>(initialDeck.subList(0, handSize + (extraCards > 0 ? extraCards-- : 0 ))));
+			ArrayList<Card> newHand = (new ArrayList<>(initialDeck.subList(0, handSize + (extraCards-- > 0 ? 1 : 0 ))));
 			initialDeck.removeAll(newHand);
 			players.add(new Player(newHand));
 		}
-		players.add(new Player(n, (new ArrayList<>(initialDeck.subList(0, handSize)))));
-
 		System.out.println(players);
+		System.out.println(initialDeck);
+	}
+
+	private void makeConfidentialCards(ArrayList<Card> cards)
+	{
+		confidentialCards.add(cards.stream().filter(x -> x.getCardType() == CardType.Location).findFirst().get());
+		confidentialCards.add(cards.stream().filter(x -> x.getCardType() == CardType.Person).findFirst().get());
+		confidentialCards.add(cards.stream().filter(x -> x.getCardType() == CardType.Weapon).findFirst().get());
+		cards.removeAll(confidentialCards);
+		System.out.println("Confidential Cards: " + confidentialCards);
 	}
 
 	private ArrayList<Card> buildDeck()
