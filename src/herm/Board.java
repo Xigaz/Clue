@@ -36,7 +36,7 @@ public class Board
 	// Reset Background
 	private final String WHITE_BACKGROUND = "\033[47m";  // WHITE
 
-	Node[][] board = new Node[25][24];
+	private Node[][] board = new Node[25][24];
 
 	String[][] boardPattern = {
 			{"X", "X", "X", "X", "X", "X", "X", " ", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X", "X"},
@@ -119,6 +119,17 @@ public class Board
 
 			board[y][x].playerMoveIn(s);
 		}
+	}
+
+	public int[] getSuspectLocation(Suspect s)
+	{
+		for(int i = 0; i < board.length; i++)
+			for(int j = 0; j < board[0].length; j++ )
+			{
+				if(board[i][j].getOccupants().stream().filter(x -> x == s).count() > 0)
+					return new int[] {i, j};
+			}
+		return new int[] {0,0};
 	}
 
 

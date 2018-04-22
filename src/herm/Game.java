@@ -9,6 +9,7 @@ public class Game
 	private final int NUM_PLAYERS = 5;
 	private ArrayList<Card> confidentialCards;
 	private Board gameBoard;
+	private boolean isGameOver = false;
 
 	public Game(String n, Suspect s)
 	{
@@ -81,6 +82,28 @@ public class Game
 
 	public void play()
 	{
+		while(!isGameOver)
+		{
+			for(Player p : players)
+			{
+				takeTurn(p);
+			}
+
+		}
+	}
+
+	private void takeTurn(Player p)
+	{
+		//AIPlayer bob = p instanceof AIPlayer ? ((AIPlayer) p) : null;
+		int counter = 1;
+		System.out.printf("%s, What would you like to do?", p.getSuspect() );
+		System.out.printf("%d) %s", counter, "Move");
+		int[] loc = gameBoard.getSuspectLocation(p.getSuspect());
+		if (loc[0] != 0 && loc[1] != 0 && )
+		{
+
+		}
+
 
 	}
 
