@@ -2,15 +2,39 @@ package herm;
 
 public class Board
 {
-	public final String ANSI_RESET = "\u001B[0m";
-	public final String ANSI_BLACK = "\u001B[30m";
-	public final String ANSI_RED = "\u001B[31m";
-	public final String ANSI_GREEN = "\u001B[32m";
-	public final String ANSI_YELLOW = "\u001B[33m";
-	public final String ANSI_BLUE = "\u001B[34m";
-	public final String ANSI_PURPLE = "\u001B[35m";
-	public final String ANSI_CYAN = "\u001B[36m";
-	public final String ANSI_WHITE = "\u001B[37m";
+	// Bold Text
+	private final String ANSI_RESET = "\u001B[1;0m";
+	private final String ANSI_BLACK = "\u001B[1;30m";
+	private final String ANSI_RED = "\u001B[1;31m";
+	private final String ANSI_GREEN = "\u001B[1;32m";
+	private final String ANSI_YELLOW = "\u001B[1;33m";
+	private final String ANSI_BLUE = "\u001B[1;34m";
+	private final String ANSI_PURPLE = "\u001B[1;35m";
+	private final String ANSI_CYAN = "\u001B[1;36m";
+	private final String ANSI_WHITE = "\u001B[1;37m";
+
+	// Bold High Intensity
+	private final String BLACK_BOLD_BRIGHT = "\033[1;90m"; // BLACK
+	private final String RED_BOLD_BRIGHT = "\033[1;91m";   // RED
+	private final String GREEN_BOLD_BRIGHT = "\033[1;92m"; // GREEN
+	private final String YELLOW_BOLD_BRIGHT = "\033[1;93m";// YELLOW
+	private final String BLUE_BOLD_BRIGHT = "\033[1;94m";  // BLUE
+	private final String PURPLE_BOLD_BRIGHT = "\033[1;95m";// PURPLE
+	private final String CYAN_BOLD_BRIGHT = "\033[1;96m";  // CYAN
+	private final String WHITE_BOLD_BRIGHT = "\033[1;97m"; // WHITE
+
+	// High Intensity backgrounds
+	private final String BLACK_BACKGROUND_BRIGHT = "\033[0;100m";// BLACK
+	private final String RED_BACKGROUND_BRIGHT = "\033[0;101m";// RED
+	private final String GREEN_BACKGROUND_BRIGHT = "\033[0;102m";// GREEN
+	private final String YELLOW_BACKGROUND_BRIGHT = "\033[0;103m";// YELLOW
+	private final String BLUE_BACKGROUND_BRIGHT = "\033[0;104m";// BLUE
+	private final String PURPLE_BACKGROUND_BRIGHT = "\033[0;105m"; // PURPLE
+	private final String CYAN_BACKGROUND_BRIGHT = "\033[0;106m";  // CYAN
+	private final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
+
+	// Reset Background
+	private final String WHITE_BACKGROUND = "\033[47m";  // WHITE
 
 	Node[][] board = new Node[25][24];
 
@@ -52,8 +76,7 @@ public class Board
 		for(int i = 0; i < boardPattern.length; i++)
 			for (int j = 0; j < boardPattern[0].length; j++)
 			{
-				switch(boardPattern[i][j])
-				{
+				switch(boardPattern[i][j]) {
 					case "X":
 						board[i][j] = new Node(false);
 						break;
@@ -89,12 +112,19 @@ public class Board
 						break;
 				}
 			}
+		for(Suspect s : Suspect.values())
+		{
+			int x = s.getStartingLoc()[0];
+			int y = s.getStartingLoc()[1];
+
+			board[y][x].playerMoveIn(s);
+		}
 	}
 
 
 	public String toString()
 	{
-		StringBuilder returnValue = new StringBuilder("╔══════════════════════╗\n");
+		StringBuilder returnValue = new StringBuilder("╔════════════════════════╗\n");
 
 
 		for(int i = 0; i < board.length; i++)
@@ -103,33 +133,32 @@ public class Board
 			for(int j = 0; j < board[0].length; j++)
 			{
 				Node checkNode = board[i][j];
-				if(i == 0)
 
 				if (checkNode.getOccupants().size() > 0)
 				{
 					if (checkNode.getOccupants().size() > 1)
-						returnValue.append(ANSI_CYAN + "@" + ANSI_RESET);
+						returnValue.append(CYAN_BOLD_BRIGHT + BLACK_BACKGROUND_BRIGHT + "@" + ANSI_RESET);
 					else
 					{
-						switch (checkNode.getOccupants().get(0).getSuspect())
+						switch (checkNode.getOccupants().get(0))
 						{
 							case MR_GREEN:
-								returnValue.append(ANSI_GREEN + "@" + ANSI_RESET);
+								returnValue.append(GREEN_BOLD_BRIGHT + BLACK_BACKGROUND_BRIGHT + Suspect.MR_GREEN.getRepresentChar() + ANSI_RESET);
 								break;
 							case MRS_WHITE:
-								returnValue.append(ANSI_WHITE + "@" + ANSI_RESET);
+								returnValue.append(WHITE_BOLD_BRIGHT + BLACK_BACKGROUND_BRIGHT + Suspect.MRS_WHITE.getRepresentChar() + ANSI_RESET);
 								break;
 							case PROF_PLUM:
-								returnValue.append(ANSI_PURPLE + "@" + ANSI_RESET);
+								returnValue.append(PURPLE_BOLD_BRIGHT + BLACK_BACKGROUND_BRIGHT + Suspect.PROF_PLUM.getRepresentChar() + ANSI_RESET);
 								break;
 							case COL_MUSTARD:
-								returnValue.append(ANSI_YELLOW + "@" + ANSI_RESET);
+								returnValue.append(YELLOW_BOLD_BRIGHT + BLACK_BACKGROUND_BRIGHT + Suspect.COL_MUSTARD.getRepresentChar() + ANSI_RESET);
 								break;
 							case MRS_PEACOCK:
-								returnValue.append(ANSI_BLUE + "@" + ANSI_RESET);
+								returnValue.append(CYAN_BOLD_BRIGHT + BLACK_BACKGROUND_BRIGHT + Suspect.MRS_PEACOCK.getRepresentChar() + ANSI_RESET);
 								break;
 							case MRS_SCARLET:
-								returnValue.append(ANSI_RED + "@" + ANSI_RESET);
+								returnValue.append(RED_BOLD_BRIGHT + BLACK_BACKGROUND_BRIGHT + Suspect.MRS_SCARLET.getRepresentChar() + ANSI_RESET);
 								break;
 						}
 					}
@@ -153,7 +182,7 @@ public class Board
 				}
 				else if(checkNode.getRoom() != null)
 				{
-					returnValue.append(checkNode.getRoom().getRepresentChar());
+					returnValue.append(BLACK_BOLD_BRIGHT + YELLOW_BACKGROUND_BRIGHT + checkNode.getRoom().getRepresentChar() + ANSI_RESET);
 				}
 
 			}
@@ -161,7 +190,7 @@ public class Board
 			returnValue.append("\n");
 		}
 
-		returnValue.append("╚══════════════════════╝\n\n");
+		returnValue.append("╚════════════════════════╝\n\n");
 		return returnValue.toString();
 	}
 }

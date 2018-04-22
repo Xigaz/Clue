@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 public class Node
 {
-	private ArrayList<Player> occupants = new ArrayList<>();
+	private ArrayList<Suspect> occupants = new ArrayList<>();
+
 	private Room room;
 	private boolean accessible;
 	private Weapon itemInRoom;
@@ -53,14 +54,14 @@ public class Node
         itemInRoom = null;
     }
 
-    public void playerMoveIn(Player p)
+    public void playerMoveIn(Suspect s)
     {
-        occupants.add(p);
+        occupants.add(s);
     }
 
-    public void playerMoveOut(Player p)
+    public void playerMoveOut(Suspect s)
     {
-        occupants.remove(p);
+        occupants.remove(s);
     }
 
     public Weapon putWeaponInRoom(Weapon w)
@@ -90,7 +91,7 @@ public class Node
         return itemInRoom;
     }
 
-    public ArrayList<Player> getOccupants()
+    public ArrayList<Suspect> getOccupants()
     {
         return occupants;
     }

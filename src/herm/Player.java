@@ -27,6 +27,7 @@ public class Player
 	private ArrayList<Card> hand;
 	private Notebook myNotebook;
     private Suspect suspect;
+    private int currentLocX, currentLocY;
 
 	public Player (String n, Suspect s, ArrayList<Card> h)
 	{
@@ -34,6 +35,8 @@ public class Player
 		hand = h;
 		suspect = s;
 		Player.removeSuspect(s);
+        currentLocX = suspect.getStartingLoc()[1];
+        currentLocY = suspect.getStartingLoc()[0];
 	}
 
 	public Player (ArrayList<Card> h)
@@ -41,6 +44,8 @@ public class Player
 		name = Player.getNameOption();
 		hand = h;
 		suspect = Player.getSuspectOption();
+		currentLocX = suspect.getStartingLoc()[1];
+		currentLocY = suspect.getStartingLoc()[0];
 	}
 
 	public ArrayList<Card> getHand()
