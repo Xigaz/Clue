@@ -13,6 +13,7 @@ public class Player
     private Notebook myNotebook;
     private Suspect suspect;
     private int currentLocX, currentLocY;
+    private boolean canGuess = false;
 
 	public Player (String n, Suspect s, ArrayList<Card> h)
 	{
@@ -24,6 +25,15 @@ public class Player
         currentLocY = suspect.getStartingLoc()[0];
 	}
 
+	public boolean isCanGuess()
+	{
+		return canGuess;
+	}
+
+	public void setCanGuess(boolean canGuess)
+	{
+		this.canGuess = canGuess;
+	}
 
 	public ArrayList<Card> getHand()
 	{

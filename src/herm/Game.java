@@ -2,6 +2,7 @@ package herm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 
 public class Game
 {
@@ -17,8 +18,8 @@ public class Game
 		System.out.println(gameBoard);
 		confidentialCards = new ArrayList<>();
 		players = new ArrayList<>();
-		Player.resetNameOptions();
-		Player.resetSuspectOptions();
+		AIPlayer.resetNameOptions();
+		AIPlayer.resetSuspectOptions();
 
 
 		ArrayList<Card> initialDeck = buildDeck();
@@ -33,7 +34,7 @@ public class Game
 		{
 			ArrayList<Card> newHand = (new ArrayList<>(initialDeck.subList(0, handSize + (extraCards-- > 0 ? 1 : 0 ))));
 			initialDeck.removeAll(newHand);
-			players.add(new Player(newHand));
+			players.add(new AIPlayer(newHand));
 		}
 		System.out.println(players);
 		//System.out.println(initialDeck);
@@ -86,7 +87,7 @@ public class Game
 		{
 			for(Player p : players)
 			{
-				takeTurn(p);
+				//takeTurn(p);
 			}
 
 		}
@@ -94,13 +95,35 @@ public class Game
 
 	private void takeTurn(Player p)
 	{
+		Scanner input = new Scanner(System.in);
+
+		Node loc = gameBoard.getSuspectLocation(p.getSuspect());
+
 		//AIPlayer bob = p instanceof AIPlayer ? ((AIPlayer) p) : null;
 		int counter = 1;
 		System.out.printf("%s, What would you like to do?", p.getSuspect() );
-		System.out.printf("%d) %s", counter, "Move");
-		int[] loc = gameBoard.getSuspectLocation(p.getSuspect());
-		if (loc[0] != 0 && loc[1] != 0 && )
+		System.out.printf("%d) %s\n", counter++, "Move");
+		if (loc.getRoom().getPassageExit() != null)
 		{
+			System.out.printf("%d) %s\n", counter++, "Take Secret Passage");
+		}
+		if(loc.getRoom() != null && p.isCanGuess())
+			System.out.printf("%d) %s\n", counter++, "Make a Suggestion");
+		System.out.printf("> ");
+		int whatToDo = input.nextInt();
+		input.nextLine();
+
+		switch(whatToDo)
+		{
+			case 1:
+		}
+
+
+
+		if (loc.getRoom() != null )
+		{
+			System.out.printf("%d) %s", counter++, "Make a Suggestion");
+			System.out.printf("%d) %s", counter++, "Make a Guess");
 
 		}
 

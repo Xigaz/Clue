@@ -78,37 +78,37 @@ public class Board
 			{
 				switch(boardPattern[i][j]) {
 					case "X":
-						board[i][j] = new Node(false);
+						board[i][j] = new Node(false, j, i);
 						break;
 					case " ":
-						board[i][j] = new Node();
+						board[i][j] = new Node(j, i);
 						break;
 					case "S":
-						board[i][j] = new Node(Room.STUDY, Weapon.CANDLESTICK);
+						board[i][j] = new Node(Room.STUDY, Weapon.CANDLESTICK, j, i);
 						break;
 					case "H":
-						board[i][j] = new Node(Room.HALL, Weapon.KNIFE);
+						board[i][j] = new Node(Room.HALL, Weapon.KNIFE, j, i);
 						break;
 					case "L":
-						board[i][j] = new Node(Room.LOUNGE, Weapon.PIPE);
+						board[i][j] = new Node(Room.LOUNGE, Weapon.PIPE, j, i);
 						break;
 					case "Y":
-						board[i][j] = new Node(Room.LIBRARY, Weapon.REVOLVER);
+						board[i][j] = new Node(Room.LIBRARY, Weapon.REVOLVER, j, i);
 						break;
 					case "D":
-						board[i][j] = new Node(Room.DINING_ROOM, Weapon.ROPE);
+						board[i][j] = new Node(Room.DINING_ROOM, Weapon.ROPE, j, i);
 						break;
 					case "I":
-						board[i][j] = new Node(Room.BILLIARD_ROOM, Weapon.WRENCH);
+						board[i][j] = new Node(Room.BILLIARD_ROOM, Weapon.WRENCH, j, i);
 						break;
 					case "C":
-						board[i][j] = new Node(Room.CONSERVATORY);
+						board[i][j] = new Node(Room.CONSERVATORY, j, i);
 						break;
 					case "A":
-						board[i][j] = new Node(Room.BALLROOM);
+						board[i][j] = new Node(Room.BALLROOM, j, i);
 						break;
 					case "K":
-						board[i][j] = new Node(Room.KITCHEN);
+						board[i][j] = new Node(Room.KITCHEN, j, i);
 						break;
 				}
 			}
@@ -121,15 +121,15 @@ public class Board
 		}
 	}
 
-	public int[] getSuspectLocation(Suspect s)
+	public Node getSuspectLocation(Suspect s)
 	{
 		for(int i = 0; i < board.length; i++)
 			for(int j = 0; j < board[0].length; j++ )
 			{
 				if(board[i][j].getOccupants().stream().filter(x -> x == s).count() > 0)
-					return new int[] {i, j};
+					return board[i][j];
 			}
-		return new int[] {0,0};
+		return null;
 	}
 
 

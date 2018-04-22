@@ -9,22 +9,26 @@ public class Node
 	private Room room;
 	private boolean accessible;
 	private Weapon itemInRoom;
+	private int nodeLocX;
+	private int nodeLocY;
 
     /**
      *  Used for Hallways
      */
-    public Node()
+    public Node(int x, int y)
     {
         room = null;
         accessible = true;
         itemInRoom = null;
+        nodeLocX = x;
+        nodeLocY = y;
     }
 
     /**
      * Used for Room Squares that are impassible
      * @param a If the node is passible
      */
-    public Node(boolean a)
+    public Node(boolean a, int x, int y)
     {
         room = null;
         itemInRoom = null;
@@ -36,7 +40,7 @@ public class Node
      * @param rm    Room this Node represents
      * @param item  Any item that this Node holds
      */
-    public Node(Room rm, Weapon item)
+    public Node(Room rm, Weapon item, int x, int y)
     {
         room = rm;
         accessible = true;
@@ -47,14 +51,24 @@ public class Node
      * Used to Create a room without a weapon
      * @param rm    Room represented by this Node
      */
-    public Node(Room rm)
+    public Node(Room rm, int x, int y)
     {
         room = rm;
         accessible = true;
         itemInRoom = null;
     }
 
-    public void playerMoveIn(Suspect s)
+	public int getNodeLocX()
+	{
+		return nodeLocX;
+	}
+
+	public int getNodeLocY()
+	{
+		return nodeLocY;
+	}
+
+	public void playerMoveIn(Suspect s)
     {
         occupants.add(s);
     }
