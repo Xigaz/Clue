@@ -53,6 +53,11 @@ public class Player
 		return name;
 	}
 
+	public Suspect getSuspect()
+    {
+        return suspect;
+    }
+
 	//TODO: Handle printing Notebook
 	//TODO:
 

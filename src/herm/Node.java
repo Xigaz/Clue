@@ -4,29 +4,53 @@ import java.util.ArrayList;
 
 public class Node
 {
-	private ArrayList<Player> occupants;
-	private Room roomName;
-	private boolean accessable;
+	private ArrayList<Player> occupants = new ArrayList<>();
+	private Room room;
+	private boolean accessible;
 	private Weapon itemInRoom;
 
+    /**
+     *  Used for Hallways
+     */
     public Node()
     {
-        roomName = null;
-        accessable = true;
+        room = null;
+        accessible = true;
         itemInRoom = null;
     }
 
-    public Node(Room rm, boolean a, Weapon item)
+    /**
+     * Used for Room Squares that are impassible
+     * @param a If the node is passible
+     */
+    public Node(boolean a)
     {
-        roomName = rm;
-        accessable = a;
+        room = null;
+        itemInRoom = null;
+        accessible = a;
+    }
+
+    /**
+     * Generic Constructor used to do most of the work
+     * @param rm    Room this Node represents
+     * @param item  Any item that this Node holds
+     */
+    public Node(Room rm, Weapon item)
+    {
+        room = rm;
+        accessible = true;
         itemInRoom = item;
     }
 
-    public Node(Room rm, boolean a)
+    /**
+     * Used to Create a room without a weapon
+     * @param rm    Room represented by this Node
+     */
+    public Node(Room rm)
     {
-        roomName = rm;
-        accessable = a;
+        room = rm;
+        accessible = true;
+        itemInRoom = null;
     }
 
     public void playerMoveIn(Player p)
@@ -43,7 +67,7 @@ public class Node
     {
         Weapon returnValue = null;
 
-        if (roomName != null)
+        if (room != null)
         {
             returnValue = itemInRoom;
             itemInRoom = w;
@@ -51,14 +75,14 @@ public class Node
         return returnValue;
     }
 
-    public Room getRoomName()
+    public Room getRoom()
     {
-        return roomName;
+        return room;
     }
 
-    public boolean isAccessable()
+    public boolean isAccessible()
     {
-        return accessable;
+        return accessible;
     }
 
     public Weapon getItemInRoom()
@@ -66,7 +90,10 @@ public class Node
         return itemInRoom;
     }
 
-
+    public ArrayList<Player> getOccupants()
+    {
+        return occupants;
+    }
 
 
 

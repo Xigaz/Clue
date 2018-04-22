@@ -8,9 +8,12 @@ public class Game
 	private ArrayList<Player> players;
 	private final int NUM_PLAYERS = 5;
 	private ArrayList<Card> confidentialCards;
+	private Board gameBoard;
 
 	public Game(String n, Suspect s)
 	{
+		gameBoard = new Board();
+		System.out.println(gameBoard);
 		confidentialCards = new ArrayList<>();
 		players = new ArrayList<>();
 		Player.resetNameOptions();
