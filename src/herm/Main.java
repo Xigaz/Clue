@@ -18,13 +18,14 @@ public class Main {
 
             System.out.println("Who would you like to play as?");
             int counter = 1;
-            for (Suspect x: Suspect.values())
+            Suspect[] values = Suspect.values();
+            for (Suspect x: values)
             {
                 System.out.printf("%d) %s\n", counter, x);
                 counter++;
             }
             System.out.print("> ");
-            Suspect suspectSelection = Suspect.COL_MUSTARD; // Suspect.values()[input.nextInt()-1];
+            Suspect suspectSelection = Suspect.COL_MUSTARD; // values[input.nextInt()-1];
             //input.nextLine();
 
             System.out.println("\nLet's get going!\n");

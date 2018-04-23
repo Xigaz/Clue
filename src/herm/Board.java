@@ -164,7 +164,7 @@ public class Board
 		for(int i = 0; i < roomNode.size(); i++)
 		{
 			int dist = Math.abs(roomNode.get(i).getNodeLocX() - suspectNode.getNodeLocX())
-					+ Math.abs(roomNode.get(i).getNodeLocX() - suspectNode.getNodeLocX());
+					+ Math.abs(roomNode.get(i).getNodeLocY() - suspectNode.getNodeLocY());
 			if (close > dist)
 			{
 				close = dist;
