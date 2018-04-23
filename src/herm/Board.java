@@ -1,5 +1,10 @@
 package herm;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Board
 {
 	// Bold Text
@@ -131,37 +136,124 @@ public class Board
 		for(int i = 0; i < board.length; i++)
 			for(int j = 0; j < board[0].length; j++ )
 			{
-				if(board[i][j].getOccupants().stream().filter(x -> x == s).count() > 0)
+				if(board[i][j].getOccupants().stream().filter(x -> x.name().equals(s.name())).count() > 0)
 					return board[i][j];
 			}
 		return null;
 	}
 
-	public Node getRoomLocation(Room r)
+	public ArrayList<Node> getRoomLocations(Room r)
 	{
+		ArrayList<Node> roomOptions = new ArrayList<>();
 		for(int i = 0; i < board.length; i++)
 			for(int j = 0; j < board[0].length; j++ )
 			{
-				if(board[i][j].getOccupants().stream().filter(x -> x == r).count() > 0)
-					return board[i][j];
+				if(board[i][j].getRoom() == r)
+					roomOptions.add(board[i][j]);
 			}
+		return roomOptions;
+	}
+
+	public Node getClosestRoomLocation(Room r, Suspect s)
+	{
+		int winner = 0, close = 9999;
+		ArrayList<Node> roomNode = getRoomLocations(r);
+		Node suspectNode = getSuspectLocation(s);
+
+
+		for(int i = 0; i < roomNode.size(); i++)
+		{
+			int dist = Math.abs(roomNode.get(i).getNodeLocX() - suspectNode.getNodeLocX())
+					+ Math.abs(roomNode.get(i).getNodeLocX() - suspectNode.getNodeLocX());
+			if (close > dist)
+			{
+				close = dist;
+				winner = i;
+			}
+
+		}
+
+
+		return roomNode.get(winner);
+	}
+
+	public ArrayList<Node> calcPath(Suspect s, Room r)
+	{
+		ArrayList<Node> path = new ArrayList<>();
+		Node suspectNode = getSuspectLocation(s);
+		Node goalNode = getClosestRoomLocation(r, s);
+
+		Map<Node, Node> pathTo = new HashMap<>();
+		ArrayList<Node> frontier = new ArrayList<>();
+		ArrayList<Node> expored = new ArrayList<>();
+
+		frontier.add(suspectNode);
+
+		while (!frontier.isEmpty())
+		{
+			Node leafNode = frontier.remove(0);
+
+			if (leafNode == goalNode)
+			{
+				//System.out.println("yay!");
+
+				Node currentNode = goalNode;
+
+				while(currentNode != null)
+				{
+					path.add(currentNode);
+					currentNode = pathTo.get(currentNode);
+				}
+				Collections.reverse(path);
+				//System.out.printf("\n%s\n", path);
+				return path;
+			}
+
+			expored.add(leafNode);
+
+			ArrayList<Node> linkers = linkedTo(leafNode);
+
+			for(int i = 0; i < linkers.size(); i++)
+			{
+				Node connectedNode = linkers.get(i);
+
+				if(!expored.contains(connectedNode) && !frontier.contains(connectedNode))
+				{
+					pathTo.put(connectedNode, leafNode);
+					frontier.add(connectedNode);
+				}
+
+			}
+
+		}
 		return null;
 	}
 
-	public int calcDistance(Suspect s, Room r)
+	public ArrayList<Node> linkedTo(Node leaf)
 	{
-		Node suspectNode = getSuspectLocation(s);
-		Node roomNode = getRoomLocation(r);
+		ArrayList<Node> linked = new ArrayList<>();
 
-		return traverse(suspectNode, roomNode);
-	}
+		Node north=null, south=null, east=null, west=null;
 
-	private int traverse(Node current, Node dest)
-	{
-		if (current.getNodeLocX() < dest.getNodeLocX())
+		if(leaf.getNodeLocY()-1 >= 0)
+			north = board[leaf.getNodeLocY()-1][leaf.getNodeLocX()];
+		if(leaf.getNodeLocY()+1 < 25)
+			south = board[leaf.getNodeLocY()+1][leaf.getNodeLocX()];
+		if(leaf.getNodeLocX()+1 < 24)
+			east  = board[leaf.getNodeLocY()][leaf.getNodeLocX()+1];
+		if(leaf.getNodeLocX()-1 >= 0)
+			west  = board[leaf.getNodeLocY()][leaf.getNodeLocX()-1];
 
+		if (north != null && north.isAccessible())
+			linked.add(north);
+		if (south != null && south.isAccessible())
+			linked.add(south);
+		if (east != null && east.isAccessible())
+			linked.add(east);
+		if (west != null && west.isAccessible())
+			linked.add(west);
 
-
+		return linked;
 	}
 
 	public String toString()

@@ -24,11 +24,19 @@ public class Game
 	private ArrayList<Card> confidentialCards;
 	private Board gameBoard;
 	private boolean isGameOver = false;
+	private Player currentPlayer;
 
 	public Game(String n, Suspect s)
 	{
 		gameBoard = new Board();
 		System.out.println(gameBoard);
+//		for(Suspect su : Suspect.values())
+//		{
+//			Node loc = gameBoard.getSuspectLocation(su);
+//			System.out.printf("%s is at (%d, %d)\n", su, loc.getNodeLocX(), loc.getNodeLocY());
+//		}
+//		System.out.printf("");
+
 		confidentialCards = new ArrayList<>();
 		players = new ArrayList<>();
 		AIPlayer.resetNameOptions();
@@ -51,6 +59,8 @@ public class Game
 		}
 		System.out.println(players);
 		//System.out.println(initialDeck);
+
+		//gameBoard.calcPath(Suspect.COL_MUSTARD, Room.BALLROOM);
 	}
 
 	private void makeConfidentialCards(ArrayList<Card> cards)
@@ -100,40 +110,43 @@ public class Game
 		{
 			for(Player p : players)
 			{
-				//takeTurn(p);
+				currentPlayer = p;
+				takeTurn();
+				isGameOver = true;
 			}
 
 		}
 	}
 
-	private void takeTurn(Player p)
+	private void takeTurn()
 	{
 
 		boolean canGuess = false, canSecretPassage = false;
 		Scanner input = new Scanner(System.in);
 
-		Node loc = gameBoard.getSuspectLocation(p.getSuspect());
+		Node loc = gameBoard.getSuspectLocation(currentPlayer.getSuspect());
 
 
-		canSecretPassage = loc.getRoom().getPassageExit() != null;
-		canGuess = p.isCanGuess();
+		canSecretPassage = loc.getRoom() != null && loc.getRoom().getPassageExit() != null;
+		canGuess = currentPlayer.isCanGuess();
 		int choice = 1;
 
 		//AIPlayer bob = p instanceof AIPlayer ? ((AIPlayer) p) : null;
 
-		while(choice >= 1 && choice <= 4) {
-			System.out.printf("\n%s, What would you like to do?", p.getSuspect());
+		while(choice < 1 && choice > 5) {
+			System.out.printf("\n%s, What would you like to do?\n", currentPlayer.getSuspect());
 			System.out.printf("1) %s\n", "Move");
 			System.out.printf("%s2) %s%s\n", canSecretPassage ? "" : RED_BACKGROUND_BRIGHT, "Take Secret Passage", ANSI_RESET);
 			System.out.printf("%s3) %s%s\n", canGuess ? "" : RED_BACKGROUND_BRIGHT, "Make a Suggestion", ANSI_RESET);
 			System.out.printf("%s4) %s%s\n", canGuess ? "" : RED_BACKGROUND_BRIGHT, "Make an Accusation", ANSI_RESET);
+			System.out.printf("%s5) %s%s\n", loc.getRoom() != null ? "" : RED_BACKGROUND_BRIGHT, "Wait In The Hall", ANSI_RESET);
 			System.out.print("> ");
 			choice = input.nextInt();
 			input.nextLine();
 
 			switch (choice) {
 				case 1:
-					movePlayer(p);
+					movePlayer();
 					break;
 				case 2:
 					if (canSecretPassage)
@@ -153,24 +166,46 @@ public class Game
 					else
 						System.out.println("You wish. Try Again.");
 					break;
+				case 5:
+					if(loc.getRoom() != null)
+						waitInHall();
+					else
+						System.out.println("You shouldn't lurk in doorways. It's rude.");
+					break;
+				default:
+					System.out.println("Just pick one of the options.");
 			}
 		}
 
-
-
-
-
-		if (loc.getRoom() != null )
+		if (gameBoard.getSuspectLocation(currentPlayer.getSuspect()).getRoom() != null)
 		{
-			System.out.printf("%d) %s", counter++, "Make a Suggestion");
-			System.out.printf("%d) %s", counter++, "Make a Guess");
+			int guessChoice = 1;
+			while (guessChoice < 1 && guessChoice > 3)
+			{
+				System.out.println("You made it to a room. Would you like to do anything else?");
+				System.out.printf("%d) %s", 1, "Make a Suggestion");
+				System.out.printf("%d) %s", 2, "Make an Accusation");
+				System.out.printf("%d) %s", 3, "Just End My Turn");
+				guessChoice = input.nextInt();
+				input.nextLine();
+
+				switch (guessChoice)
+				{
+					case 1:
+						makeSuggestion();
+						break;
+					case 2:
+						makeAccusation();
+						break;
+					default:
+						System.out.println("Just pick one of the options.");
+				}
+			}
 
 		}
-
-
 	}
 
-	private void movePlayer(Player p)
+	private void movePlayer()
 	{
 		Scanner input = new Scanner(System.in);
 		Random rand = new Random();
@@ -178,16 +213,47 @@ public class Game
 		int roll = rand.nextInt(12000) % 12;
 
 		System.out.printf("You rolled a..%d!\n", roll);
-		System.out.printf("Where would you like to go?");
+		System.out.println("Where would you like to go?");
 		int counter = 1;
 		for(Room r : Room.values())
 		{
-			System.out.printf("%d) %s (%s)\n", counter++, r.toString(), gameBoard.calcDistance(p.getSuspect(), r) + " spaces away");
+			System.out.printf("%d) %s (%s)\n", counter++, r.toString(), gameBoard.calcPath(currentPlayer.getSuspect(), r).size() + " spaces away");
 		}
 		System.out.print(">");
 		int choice = input.nextInt();
 		input.nextLine();
 
+		ArrayList<Node> path = gameBoard.calcPath(currentPlayer.getSuspect(), Room.values()[choice-1]);
+		path.get(0).playerMoveOut(currentPlayer.getSuspect());
+		path.get(roll-1).playerMoveIn(currentPlayer.getSuspect());
 
+
+
+
+	}
+
+	private void moveSecretPassage()
+	{
+
+	}
+
+	private void makeSuggestion()
+	{
+
+	}
+
+	private void makeAccusation()
+	{
+
+	}
+
+	private void waitInHall()
+	{
+		ArrayList<Node> adjacent = gameBoard.linkedTo(gameBoard.getSuspectLocation(currentPlayer.getSuspect()));
+
+		for(Node n : adjacent)
+		{
+			n.isAccessible();
+		}
 	}
 }

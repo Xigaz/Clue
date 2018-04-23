@@ -35,4 +35,7 @@ public enum Suspect implements CardOptions {
 	{
 		return new int[] {startingLocX, startingLocY};
 	}
+
+	//public boolean equals(Suspect s)
+
 };

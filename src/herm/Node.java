@@ -35,6 +35,8 @@ public class Node
         itemInRoom = null;
         accessible = a;
         weight = a ? 1 : 99;
+        nodeLocX = x;
+        nodeLocY = y;
     }
 
     /**
@@ -48,6 +50,8 @@ public class Node
         accessible = true;
         itemInRoom = item;
         weight = 1;
+        nodeLocX = x;
+        nodeLocY = y;
     }
 
     /**
@@ -60,6 +64,8 @@ public class Node
         accessible = true;
         itemInRoom = null;
         weight = 1;
+        nodeLocX = x;
+        nodeLocY = y;
     }
 
 	public int getNodeLocX()
@@ -114,6 +120,10 @@ public class Node
         return occupants;
     }
 
+    public String toString()
+    {
+        return String.format("(%d, %d)", getNodeLocX(), getNodeLocY());
+    }
 
 
 
