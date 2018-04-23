@@ -244,12 +244,54 @@ public class Game
 
 	private void makeSuggestion()
 	{
+		Guess suggestion = buildAGuess();
+
+
+
 
 	}
 
 	private void makeAccusation()
 	{
 
+	}
+
+	private Guess buildAGuess()
+	{
+		Scanner input = new Scanner(System.in);
+		Room guessRoom = gameBoard.getSuspectLocation(currentPlayer.getSuspect()).getRoom();
+
+		int counter = 1;
+		for(Weapon x : Weapon.values())
+		{
+			System.out.printf("%d) %s\n", counter, x);
+			counter++;
+
+		}
+		System.out.print("> ");
+		Weapon guessWeapon = Weapon.values()[input.nextInt()-1];
+		input.nextLine();
+
+		counter = 1;
+		for(Suspect x : Suspect.values())
+		{
+			System.out.printf("%d) %s\n", counter, x);
+			counter++;
+
+		}
+		System.out.print("> ");
+		Suspect guessSuspect = Suspect.values()[input.nextInt()-1];
+		input.nextLine();
+
+		for(Player p : players)
+		{
+			if (p.getSuspect() == guessSuspect)
+			{
+				p.setCanGuess(true);
+			}
+		}
+
+		return new Guess(guessSuspect, guessWeapon, guessRoom);
 	}
 
 	private void waitInHall()
