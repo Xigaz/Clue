@@ -121,6 +121,11 @@ public class Board
 		}
 	}
 
+	private Node getNode(int x, int y)
+	{
+		return board[y][x];
+	}
+
 	public Node getSuspectLocation(Suspect s)
 	{
 		for(int i = 0; i < board.length; i++)
@@ -132,6 +137,32 @@ public class Board
 		return null;
 	}
 
+	public Node getRoomLocation(Room r)
+	{
+		for(int i = 0; i < board.length; i++)
+			for(int j = 0; j < board[0].length; j++ )
+			{
+				if(board[i][j].getOccupants().stream().filter(x -> x == r).count() > 0)
+					return board[i][j];
+			}
+		return null;
+	}
+
+	public int calcDistance(Suspect s, Room r)
+	{
+		Node suspectNode = getSuspectLocation(s);
+		Node roomNode = getRoomLocation(r);
+
+		return traverse(suspectNode, roomNode);
+	}
+
+	private int traverse(Node current, Node dest)
+	{
+		if (current.getNodeLocX() < dest.getNodeLocX())
+
+
+
+	}
 
 	public String toString()
 	{

@@ -11,6 +11,7 @@ public class Node
 	private Weapon itemInRoom;
 	private int nodeLocX;
 	private int nodeLocY;
+	private int weight = 1;
 
     /**
      *  Used for Hallways
@@ -33,6 +34,7 @@ public class Node
         room = null;
         itemInRoom = null;
         accessible = a;
+        weight = a ? 1 : 99;
     }
 
     /**
@@ -45,6 +47,7 @@ public class Node
         room = rm;
         accessible = true;
         itemInRoom = item;
+        weight = 1;
     }
 
     /**
@@ -56,6 +59,7 @@ public class Node
         room = rm;
         accessible = true;
         itemInRoom = null;
+        weight = 1;
     }
 
 	public int getNodeLocX()
