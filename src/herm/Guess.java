@@ -30,6 +30,6 @@ public class Guess
 
 	public String toString()
 	{
-		return String.format("Room: %s\nSuspect: %s\nWeapon: %s\n", guessRoom, guessSuspect, guessWeapon);
+		return String.format("Room: %s\nSuspect: %s\nWeapon: %s\n\n", guessRoom, guessSuspect, guessWeapon);
 	}
 }

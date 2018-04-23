@@ -206,6 +206,7 @@ public class Game
 			}
 
 		}
+		currentPlayer.setCanGuess(false);
 	}
 
 	private void movePlayer()
@@ -214,17 +215,19 @@ public class Game
 		Random rand = new Random();
 
 		int roll = 7;// rand.nextInt(12000) % 12 + 1;
+		int choice = 0;
 
-		System.out.printf("You rolled a..%d!\n", roll);
-		System.out.println("Where would you like to go?");
-		int counter = 1;
-		for(Room r : Room.values())
-		{
-			System.out.printf("%d) %s (%s)\n", counter++, r.toString(), gameBoard.calcPath(currentPlayer.getSuspect(), r).size() - 1 + " spaces away");
+		while (choice < 2 || choice > 9) {
+			System.out.printf("You rolled a..%d!\n", roll);
+			System.out.println("Where would you like to go?");
+			int counter = 1;
+			for (Room r : Room.values()) {
+				System.out.printf("%d) %s (%s)\n", counter++, r.toString(), gameBoard.calcPath(currentPlayer.getSuspect(), r).size() - 1 + " spaces away");
+			}
+			System.out.print(">");
+			choice = input.nextInt();
+			input.nextLine();
 		}
-		System.out.print(">");
-		int choice = input.nextInt();
-		input.nextLine();
 
 		ArrayList<Node> path = gameBoard.calcPath(currentPlayer.getSuspect(), Room.values()[choice-1]);
 		path.get(0).playerMoveOut(currentPlayer.getSuspect());
@@ -246,8 +249,36 @@ public class Game
 	{
 		Guess suggestion = buildAGuess();
 
+		for(Player p : players)
+		{
+			if (p.getSuspect() == suggestion.getGuessSuspect())
+			{
+				p.setCanGuess(true);
+				gameBoard.getSuspectLocation(p.getSuspect()).playerMoveOut(p.getSuspect());
+				gameBoard.getSuspectLocation(currentPlayer.getSuspect()).playerMoveIn(p.getSuspect());
+			}
+		}
 
+		System.out.printf("%s has put forth a Suggestion:\n%s", currentPlayer.getSuspect(), suggestion);
 
+		for(int i = 1; i < players.size(); i++)
+		{
+			int index = players.indexOf(currentPlayer) + i > players.size() ? players.indexOf(currentPlayer) + i - players.size() : players.indexOf(currentPlayer) + i;
+
+			Player p = players.get(index);
+			ArrayList<Card> cards = p.getHand();
+			for(Card c : cards)
+			{
+				if (c.getTitle() == suggestion.getGuessSuspect() ||
+						c.getTitle() == suggestion.getGuessRoom() ||
+						c.getTitle() == suggestion.getGuessWeapon())
+				{
+					System.out.printf("%s shows you %s\n", p.getSuspect(), c);
+					return;
+				}
+
+			}
+		}
 
 	}
 
@@ -266,7 +297,6 @@ public class Game
 		{
 			System.out.printf("%d) %s\n", counter, x);
 			counter++;
-
 		}
 		System.out.print("> ");
 		Weapon guessWeapon = Weapon.values()[input.nextInt()-1];
@@ -277,19 +307,10 @@ public class Game
 		{
 			System.out.printf("%d) %s\n", counter, x);
 			counter++;
-
 		}
 		System.out.print("> ");
 		Suspect guessSuspect = Suspect.values()[input.nextInt()-1];
 		input.nextLine();
-
-		for(Player p : players)
-		{
-			if (p.getSuspect() == guessSuspect)
-			{
-				p.setCanGuess(true);
-			}
-		}
 
 		return new Guess(guessSuspect, guessWeapon, guessRoom);
 	}

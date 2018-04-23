@@ -25,7 +25,7 @@ public class Main {
                 counter++;
             }
             System.out.print("> ");
-            Suspect suspectSelection = Suspect.COL_MUSTARD; // values[input.nextInt()-1];
+            Suspect suspectSelection = Suspect.MRS_PEACOCK; // values[input.nextInt()-1];
             //input.nextLine();
 
             System.out.println("\nLet's get going!\n");
