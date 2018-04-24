@@ -27,7 +27,7 @@ public class Game
 	public Game(String n, Suspect s)
 	{
 		gameBoard = new Board();
-		System.out.println(gameBoard);
+		//System.out.println(gameBoard);
 //		for(Suspect su : Suspect.values())
 //		{
 //			Node loc = gameBoard.getSuspectLocation(su);
@@ -55,7 +55,7 @@ public class Game
 			initialDeck.removeAll(newHand);
 			players.add(new AIPlayer(newHand));
 		}
-		System.out.println(players);
+		//System.out.println(players);
 		//System.out.println(initialDeck);
 
 		//gameBoard.calcPath(Suspect.COL_MUSTARD, Room.BALLROOM);
@@ -67,7 +67,7 @@ public class Game
 		confidentialCards.add(cards.stream().filter(x -> x.getCardType() == CardType.Person).findFirst().get());
 		confidentialCards.add(cards.stream().filter(x -> x.getCardType() == CardType.Weapon).findFirst().get());
 		cards.removeAll(confidentialCards);
-		System.out.println("Confidential Cards: " + confidentialCards);
+		//System.out.println("Confidential Cards: " + confidentialCards);
 	}
 
 	private ArrayList<Card> buildDeck()
@@ -104,6 +104,11 @@ public class Game
 
 	public void play()
 	{
+		System.out.println("You are joined today by:\n");
+		for(Player p : players)
+			if (p instanceof AIPlayer)
+				System.out.printf("%s (%s)\n", p.getSuspect(), p.getName());
+
 		while(!isGameOver)
 		{
 			for(Player p : players)
@@ -140,15 +145,16 @@ public class Game
 			if ((new Random()).nextBoolean())
 				waitInHall();
 			else
-				movePlayer();
+				moveAIPlayer();
 		}
 		else
-			movePlayer();
+			moveAIPlayer();
 
 		loc = gameBoard.getSuspectLocation(currentPlayer.getSuspect());
-		if (loc.getRoom() != null)
+		if (loc.getRoom() != null && currentPlayer.notebookComplete() > 80)
+			finalAccusation(buildAIGuess(), currentPlayer.getSuspect());
+		else if (loc.getRoom() != null)
 			makeSuggestion();
-
 	}
 
 	private void takeTurn()
@@ -245,7 +251,7 @@ public class Game
 		Scanner input = new Scanner(System.in);
 		Random rand = new Random();
 
-		int roll = 7;// rand.nextInt(12000) % 12 + 1;
+		int roll =  rand.nextInt(120000) % 12 + 1;
 		int choice = 0;
 
 		while (choice < 2 || choice > 9) {
@@ -261,6 +267,31 @@ public class Game
 		}
 
 		ArrayList<Node> path = gameBoard.calcPath(currentPlayer.getSuspect(), Room.values()[choice-1]);
+		path.get(0).playerMoveOut(currentPlayer.getSuspect());
+
+		if (roll < path.size())
+			path.get(roll).playerMoveIn(currentPlayer.getSuspect());
+		else
+			path.get(path.size()-1).playerMoveIn(currentPlayer.getSuspect());
+
+	}
+
+	private void moveAIPlayer()
+	{
+		Random rand = new Random();
+
+		int roll = rand.nextInt(120000) % 12 + 1;
+
+		Room choice = null;
+		for(Room r : Room.values())
+		{
+			if(gameBoard.calcPath(currentPlayer.getSuspect(), r).size() < roll)
+				choice = r;
+		}
+		if (choice == null)
+			choice = Room.values()[rand.nextInt(900000 ) % Room.values().length];
+
+		ArrayList<Node> path = gameBoard.calcPath(currentPlayer.getSuspect(), choice);
 		path.get(0).playerMoveOut(currentPlayer.getSuspect());
 
 		if (roll < path.size())
@@ -337,6 +368,12 @@ public class Game
 		finalGuess.setGuessRoom(Room.values()[input.nextInt()-1]);
 		input.nextLine();
 
+		finalAccusation(finalGuess, currentPlayer.getSuspect());
+
+	}
+
+	private void finalAccusation(Guess finalGuess, Suspect suspect)
+	{
 		Room r = null;
 		Weapon w = null;
 		Suspect s = null;
@@ -371,7 +408,6 @@ public class Game
 			TimeUnit.SECONDS.sleep(2);
 		}catch(InterruptedException e)
 		{}
-
 	}
 
 	private Guess buildAGuess()
@@ -409,15 +445,16 @@ public class Game
 		ArrayList<Suspect> s = new ArrayList<>(Arrays.asList(Suspect.values()));
 		ArrayList<Weapon> w = new ArrayList<>(Arrays.asList(Weapon.values()));
 
-		for(Card x : currentPlayer.getHand())
+		for(Suspect x : currentPlayer.getNotebookSuspect())
 		{
-			if (x.getTitle() instanceof Suspect)
-				s.remove((Suspect) x.getTitle());
-			else if (x.getTitle() instanceof Weapon)
-				w.remove((Weapon) x.getTitle());
+			s.remove(x);
+		}
+		for(Weapon x : currentPlayer.getNotebookWeapon())
+		{
+			w.remove(x);
 		}
 
-		return new Guess( s.get((new Random()).nextInt(60000)%6), w.get((new Random()).nextInt(60000)%6), gameBoard.getSuspectLocation(currentPlayer.getSuspect()).getRoom() );
+		return new Guess( s.get((new Random()).nextInt(60000)%s.size()), w.get((new Random()).nextInt(60000)%w.size()), gameBoard.getSuspectLocation(currentPlayer.getSuspect()).getRoom() );
 	}
 
 	private void waitInHall()

@@ -14,7 +14,7 @@ public class Main {
         {
             System.out.print("Hello! Welcome to Clue\n" +
                     "What is your name? ");
-            String name = "Bryce"; //input.nextLine();
+            String name = input.nextLine();
 
             System.out.println("Who would you like to play as?");
             int counter = 1;
@@ -25,8 +25,8 @@ public class Main {
                 counter++;
             }
             System.out.print("> ");
-            Suspect suspectSelection = Suspect.MRS_PEACOCK; // values[input.nextInt()-1];
-            //input.nextLine();
+            Suspect suspectSelection = values[input.nextInt()-1];
+            input.nextLine();
 
             System.out.println("\nLet's get going!\n");
 

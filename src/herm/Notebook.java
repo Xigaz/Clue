@@ -46,6 +46,11 @@ public class Notebook
         return (Suspect[]) knownSuspects.keySet().toArray();
     }
 
+    public double percentComplete()
+    {
+        return (knownRooms.size() + knownSuspects.size() + knownWeapons.size()) * 1.0 / (Suspect.values().length + Room.values().length + Weapon.values().length);
+    }
+
     /**
      * Add suspect to known list
      * @param k The Suspect to be added to the known list

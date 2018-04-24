@@ -81,7 +81,10 @@ public class Player
         return myNotebook.getKnownRooms();
     }
 
-
+    public double notebookComplete()
+    {
+        return myNotebook.percentComplete();
+    }
 
     public String toString()
 	{
