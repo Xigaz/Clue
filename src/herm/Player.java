@@ -23,6 +23,7 @@ public class Player
 		AIPlayer.removeSuspect(s);
         currentLocX = suspect.getStartingLoc()[1];
         currentLocY = suspect.getStartingLoc()[0];
+        myNotebook = new Notebook(hand, suspect);
 	}
 
 	public boolean isCanGuess()
@@ -50,10 +51,39 @@ public class Player
         return suspect;
     }
 
-	//TODO: Handle printing Notebook
-	//TODO:
+    public void addToNotebook(Suspect shown, Suspect shower)
+    {
+        myNotebook.addKnownSuspects(shown, shower);
+    }
 
-	public String toString()
+    public void addToNotebook(Weapon w, Suspect shower)
+    {
+        myNotebook.addKnownWeapon(w, shower);
+    }
+
+    public void addToNotebook(Room r, Suspect shower)
+    {
+        myNotebook.addKnownRooms(r, shower);
+    }
+
+    public Suspect[] getNotebookSuspect()
+    {
+        return myNotebook.getKnownSuspects();
+    }
+
+    public Weapon[] getNotebookWeapon()
+    {
+        return myNotebook.getKnownWeapons();
+    }
+
+    public Room[] getNotebookRoom()
+    {
+        return myNotebook.getKnownRooms();
+    }
+
+
+
+    public String toString()
 	{
 		return String.format("%s (%s)\tHand: %s\n", suspect, name, hand);
 	}

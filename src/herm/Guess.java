@@ -28,6 +28,11 @@ public class Guess
 		return guessRoom;
 	}
 
+	public void setGuessRoom(Room r)
+	{
+		guessRoom = r;
+	}
+
 	public String toString()
 	{
 		return String.format("Room: %s\nSuspect: %s\nWeapon: %s\n\n", guessRoom, guessSuspect, guessWeapon);

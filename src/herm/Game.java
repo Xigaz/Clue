@@ -1,9 +1,7 @@
 package herm;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Game
 {
@@ -111,13 +109,46 @@ public class Game
 			for(Player p : players)
 			{
 				currentPlayer = p;
-				takeTurn();
+
+				if (p instanceof AIPlayer )
+					AITurn();
+				else
+					takeTurn();
+
 				System.out.println(gameBoard);
-				//gameBoard.getClosestRoomLocation(Room.BALLROOM, Suspect.MR_GREEN);
-				isGameOver = true;
+				if(isGameOver)
+					break;
 			}
 
 		}
+	}
+
+	private void AITurn()
+	{
+		boolean canGuess = false, canSecretPassage = false;
+		Node loc = gameBoard.getSuspectLocation(currentPlayer.getSuspect());
+
+		canSecretPassage = loc.getRoom() != null && loc.getRoom().getPassageExit() != null;
+		canGuess = currentPlayer.isCanGuess();
+
+		if(canGuess)
+			makeSuggestion();
+		else if (canSecretPassage)
+			moveSecretPassage();
+		else if (loc.getRoom() != null)
+		{
+			if ((new Random()).nextBoolean())
+				waitInHall();
+			else
+				movePlayer();
+		}
+		else
+			movePlayer();
+
+		loc = gameBoard.getSuspectLocation(currentPlayer.getSuspect());
+		if (loc.getRoom() != null)
+			makeSuggestion();
+
 	}
 
 	private void takeTurn()
@@ -247,7 +278,8 @@ public class Game
 
 	private void makeSuggestion()
 	{
-		Guess suggestion = buildAGuess();
+
+		Guess suggestion = currentPlayer instanceof AIPlayer ? buildAGuess() : buildAIGuess();
 
 		for(Player p : players)
 		{
@@ -274,16 +306,71 @@ public class Game
 						c.getTitle() == suggestion.getGuessWeapon())
 				{
 					System.out.printf("%s shows you %s\n", p.getSuspect(), c);
+					try {
+						TimeUnit.SECONDS.sleep(2);
+					}catch(InterruptedException e)
+					{}
 					return;
 				}
 
 			}
 		}
-
+		System.out.println("\nNo Cards were shown!\n");
+		try {
+			TimeUnit.SECONDS.sleep(2);
+		}catch(InterruptedException e)
+		{}
 	}
 
 	private void makeAccusation()
 	{
+		Scanner input = new Scanner(System.in);
+		Guess finalGuess = buildAGuess();
+
+		System.out.println("Where did the Murder Happen?");
+		int counter = 1;
+		for(Room rm : Room.values())
+		{
+			System.out.printf("%d) %s\n", counter++, rm);
+		}
+		System.out.print("> ");
+		finalGuess.setGuessRoom(Room.values()[input.nextInt()-1]);
+		input.nextLine();
+
+		Room r = null;
+		Weapon w = null;
+		Suspect s = null;
+
+		for(Card x : confidentialCards)
+		{
+			CardOptions y = x.getTitle();
+			if (y instanceof Room)
+				r = (Room) y;
+			else if(y instanceof Weapon)
+				w = (Weapon) y;
+			else
+				s = (Suspect) y;
+		}
+
+		System.out.printf("%s has made an Accusation!!!\n\n%s", currentPlayer.getSuspect(), finalGuess);
+		try {
+			TimeUnit.SECONDS.sleep(2);
+		}catch(InterruptedException e)
+		{}
+		if (finalGuess.getGuessSuspect() == s && finalGuess.getGuessRoom() == r && finalGuess.getGuessWeapon() == w)
+		{
+			System.out.printf("\n\n%s WINS!!!!\n\n", currentPlayer.getName());
+			isGameOver = true;
+		}
+		else
+		{
+			System.out.printf("\n\n%s IS WRONG!!\n\nYou're out!", currentPlayer.getName());
+			players.remove(currentPlayer);
+		}
+		try {
+			TimeUnit.SECONDS.sleep(2);
+		}catch(InterruptedException e)
+		{}
 
 	}
 
@@ -292,6 +379,7 @@ public class Game
 		Scanner input = new Scanner(System.in);
 		Room guessRoom = gameBoard.getSuspectLocation(currentPlayer.getSuspect()).getRoom();
 
+		System.out.println("What was the murder weapon?");
 		int counter = 1;
 		for(Weapon x : Weapon.values())
 		{
@@ -302,6 +390,7 @@ public class Game
 		Weapon guessWeapon = Weapon.values()[input.nextInt()-1];
 		input.nextLine();
 
+		System.out.println("Who is the murder?");
 		counter = 1;
 		for(Suspect x : Suspect.values())
 		{
@@ -313,6 +402,22 @@ public class Game
 		input.nextLine();
 
 		return new Guess(guessSuspect, guessWeapon, guessRoom);
+	}
+
+	private Guess buildAIGuess()
+	{
+		ArrayList<Suspect> s = new ArrayList<>(Arrays.asList(Suspect.values()));
+		ArrayList<Weapon> w = new ArrayList<>(Arrays.asList(Weapon.values()));
+
+		for(Card x : currentPlayer.getHand())
+		{
+			if (x.getTitle() instanceof Suspect)
+				s.remove((Suspect) x.getTitle());
+			else if (x.getTitle() instanceof Weapon)
+				w.remove((Weapon) x.getTitle());
+		}
+
+		return new Guess( s.get((new Random()).nextInt(60000)%6), w.get((new Random()).nextInt(60000)%6), gameBoard.getSuspectLocation(currentPlayer.getSuspect()).getRoom() );
 	}
 
 	private void waitInHall()
