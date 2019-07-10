@@ -99,6 +99,13 @@ public class Game
 
 		}
 		Collections.shuffle(deck);
+		Collections.shuffle(deck);
+		Collections.shuffle(deck);
+		Collections.shuffle(deck);
+		Collections.shuffle(deck);
+		Collections.shuffle(deck);
+		Collections.shuffle(deck);
+		Collections.shuffle(deck);
 		return deck;
 	}
 
@@ -114,6 +121,8 @@ public class Game
 			for(Player p : players)
 			{
 				currentPlayer = p;
+
+				System.out.printf("%s's Turn: \n", currentPlayer.getName());
 
 				if (p instanceof AIPlayer )
 					AITurn();
@@ -137,7 +146,11 @@ public class Game
 		canGuess = currentPlayer.isCanGuess();
 
 		if(canGuess)
+		{
 			makeSuggestion();
+			currentPlayer.setCanGuess(false);
+			canGuess = false;
+		}
 		else if (canSecretPassage)
 			moveSecretPassage();
 		else if (loc.getRoom() != null)
@@ -151,9 +164,9 @@ public class Game
 			moveAIPlayer();
 
 		loc = gameBoard.getSuspectLocation(currentPlayer.getSuspect());
-		if (loc.getRoom() != null && currentPlayer.notebookComplete() > 80)
+		if (canGuess && loc.getRoom() != null && currentPlayer.notebookComplete() > 80)
 			finalAccusation(buildAIGuess(), currentPlayer.getSuspect());
-		else if (loc.getRoom() != null)
+		else if (canGuess && loc.getRoom() != null)
 			makeSuggestion();
 	}
 
@@ -179,6 +192,7 @@ public class Game
 			System.out.printf("%s3) %s%s\n", canGuess ? "" : RED_BACKGROUND_BRIGHT, "Make a Suggestion", ANSI_RESET);
 			System.out.printf("%s4) %s%s\n", canGuess ? "" : RED_BACKGROUND_BRIGHT, "Make an Accusation", ANSI_RESET);
 			System.out.printf("%s5) %s%s\n", loc.getRoom() != null ? "" : RED_BACKGROUND_BRIGHT, "Wait In The Hall", ANSI_RESET);
+			System.out.printf("6) %s\n", "Look at my Notebook");
 			System.out.print("> ");
 			choice = input.nextInt();
 			input.nextLine();
@@ -195,7 +209,11 @@ public class Game
 					break;
 				case 3:
 					if (canGuess)
+					{
 						makeSuggestion();
+						currentPlayer.setCanGuess(false);
+						canGuess = false;
+					}
 					else
 						System.out.println("Why don't you try that again.");
 					break;
@@ -211,6 +229,11 @@ public class Game
 					else
 						System.out.println("You shouldn't lurk in doorways. It's rude.");
 					break;
+				case 6:
+					System.out.println("\nYour Notebook:");
+					System.out.println("Rooms: " + Arrays.toString(currentPlayer.getNotebookRoom()));
+					System.out.println("Suspect: " + Arrays.toString(currentPlayer.getNotebookSuspect()));
+					System.out.println("Weapon: " + Arrays.toString(currentPlayer.getNotebookWeapon()));
 				default:
 					System.out.println("Just pick one of the options.");
 			}
@@ -254,7 +277,7 @@ public class Game
 		int roll =  rand.nextInt(120000) % 12 + 1;
 		int choice = 0;
 
-		while (choice < 2 || choice > 9) {
+		while (choice < 1 || choice > 9) {
 			System.out.printf("You rolled a..%d!\n", roll);
 			System.out.println("Where would you like to go?");
 			int counter = 1;
@@ -310,8 +333,9 @@ public class Game
 	private void makeSuggestion()
 	{
 
-		Guess suggestion = currentPlayer instanceof AIPlayer ? buildAGuess() : buildAIGuess();
+		Guess suggestion = currentPlayer instanceof AIPlayer ? buildAIGuess() : buildAGuess() ;
 
+		if(!suggestion.getGuessSuspect().toString().equalsIgnoreCase(currentPlayer.getSuspect().toString()))
 		for(Player p : players)
 		{
 			if (p.getSuspect() == suggestion.getGuessSuspect())
@@ -326,7 +350,7 @@ public class Game
 
 		for(int i = 1; i < players.size(); i++)
 		{
-			int index = players.indexOf(currentPlayer) + i > players.size() ? players.indexOf(currentPlayer) + i - players.size() : players.indexOf(currentPlayer) + i;
+			int index = players.indexOf(currentPlayer) + i >= players.size() ? players.indexOf(currentPlayer) + i - players.size() : players.indexOf(currentPlayer) + i;
 
 			Player p = players.get(index);
 			ArrayList<Card> cards = p.getHand();
@@ -336,7 +360,8 @@ public class Game
 						c.getTitle() == suggestion.getGuessRoom() ||
 						c.getTitle() == suggestion.getGuessWeapon())
 				{
-					System.out.printf("%s shows you %s\n", p.getSuspect(), c);
+					currentPlayer.addToNotebook(c, p.getSuspect());
+					System.out.printf("%s shows %s\n", p.getSuspect(), currentPlayer instanceof AIPlayer ? "a card" : c);
 					try {
 						TimeUnit.SECONDS.sleep(2);
 					}catch(InterruptedException e)
@@ -414,28 +439,38 @@ public class Game
 	{
 		Scanner input = new Scanner(System.in);
 		Room guessRoom = gameBoard.getSuspectLocation(currentPlayer.getSuspect()).getRoom();
+		Suspect guessSuspect;
+		Weapon guessWeapon;
 
-		System.out.println("What was the murder weapon?");
-		int counter = 1;
-		for(Weapon x : Weapon.values())
-		{
-			System.out.printf("%d) %s\n", counter, x);
-			counter++;
-		}
-		System.out.print("> ");
-		Weapon guessWeapon = Weapon.values()[input.nextInt()-1];
-		input.nextLine();
+		int wPick = 0;
+		while(wPick < 1 || wPick > Weapon.values().length) {
+			int counter = 1;
 
-		System.out.println("Who is the murder?");
-		counter = 1;
-		for(Suspect x : Suspect.values())
-		{
-			System.out.printf("%d) %s\n", counter, x);
-			counter++;
+			System.out.println("What was the murder weapon?");
+			for (Weapon x : Weapon.values()) {
+				System.out.printf("%d) %s\n", counter, x);
+				counter++;
+			}
+			System.out.print("> ");
+			wPick = input.nextInt();
+			input.nextLine();
 		}
-		System.out.print("> ");
-		Suspect guessSuspect = Suspect.values()[input.nextInt()-1];
-		input.nextLine();
+		guessWeapon = Weapon.values()[wPick-1];
+
+		int mPick = 0;
+		while (mPick < 1 || mPick > Suspect.values().length )
+		{
+			System.out.println("Who is the murder?");
+			int counter = 1;
+			for (Suspect x : Suspect.values()) {
+				System.out.printf("%d) %s\n", counter, x);
+				counter++;
+			}
+			System.out.print("> ");
+			mPick = input.nextInt();
+			input.nextLine();
+		}
+		guessSuspect = Suspect.values()[mPick - 1];
 
 		return new Guess(guessSuspect, guessWeapon, guessRoom);
 	}

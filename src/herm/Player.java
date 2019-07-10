@@ -51,20 +51,30 @@ public class Player
         return suspect;
     }
 
-    public void addToNotebook(Suspect shown, Suspect shower)
+    public void addToNotebook(Card card, Suspect shower)
     {
-        myNotebook.addKnownSuspects(shown, shower);
+        if(card.getCardType() == CardType.Weapon)
+            myNotebook.addKnownWeapon((Weapon)card.getTitle(), shower);
+        else if(card.getCardType() == CardType.Location)
+            myNotebook.addKnownRooms((Room) card.getTitle(), shower);
+        else if(card.getCardType() == CardType.Person)
+            myNotebook.addKnownSuspects((Suspect) card.getTitle(), shower);
     }
 
-    public void addToNotebook(Weapon w, Suspect shower)
-    {
-        myNotebook.addKnownWeapon(w, shower);
-    }
-
-    public void addToNotebook(Room r, Suspect shower)
-    {
-        myNotebook.addKnownRooms(r, shower);
-    }
+//    public void addToNotebook(Suspect shown, Suspect shower)
+//    {
+//        myNotebook.addKnownSuspects(shown, shower);
+//    }
+//
+//    public void addToNotebook(Weapon w, Suspect shower)
+//    {
+//        myNotebook.addKnownWeapon(w, shower);
+//    }
+//
+//    public void addToNotebook(Room r, Suspect shower)
+//    {
+//        myNotebook.addKnownRooms(r, shower);
+//    }
 
     public Suspect[] getNotebookSuspect()
     {

@@ -27,7 +27,15 @@ public class Notebook
     }
 
     public Weapon[] getKnownWeapons() {
-        return (Weapon[]) knownWeapons.keySet().toArray();
+        Weapon[] w = new Weapon[knownWeapons.keySet().toArray().length];
+		int i = 0;
+		for(Object x : knownWeapons.keySet())
+		{
+			w[i] = (Weapon) x;
+			i++;
+		}
+
+    	return w;
     }
 
     public void addKnownWeapon(Weapon w, Suspect s) {
@@ -35,7 +43,14 @@ public class Notebook
     }
 
     public Room[] getKnownRooms() {
-        return (Room[]) knownRooms.keySet().toArray();
+        Room[] r = new Room[knownRooms.keySet().toArray().length];
+    	int i = 0;
+        for(Object x : knownRooms.keySet())
+		{
+			r[i] = (Room) x;
+			i++;
+		}
+    	return r;
     }
 
     public void addKnownRooms(Room r, Suspect s) {
@@ -43,7 +58,15 @@ public class Notebook
     }
 
     public Suspect[] getKnownSuspects() {
-        return (Suspect[]) knownSuspects.keySet().toArray();
+    	Suspect[] s = new Suspect[knownSuspects.keySet().toArray().length];
+		int i = 0;
+		for(Object x : knownSuspects.keySet())
+		{
+			s[i] = (Suspect) x;
+			i++;
+		}
+
+        return s;
     }
 
     public double percentComplete()

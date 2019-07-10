@@ -29,7 +29,7 @@ public enum Room implements CardOptions {
 
 	public Room getPassageExit()
 	{
-		return valueOf(passageExit.toUpperCase());
+		return passageExit == null ? null : valueOf(passageExit.toUpperCase().replace(" ", "_"));
 	}
 
 	public String toString()
