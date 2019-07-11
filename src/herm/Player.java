@@ -1,13 +1,9 @@
 package herm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 
 public class Player
 {
-
-
     private String name;
     private ArrayList<Card> hand;
     private Notebook myNotebook;
@@ -24,6 +20,7 @@ public class Player
         currentLocX = suspect.getStartingLoc()[1];
         currentLocY = suspect.getStartingLoc()[0];
         myNotebook = new Notebook(hand, suspect);
+        System.out.println("Hello!");
 	}
 
 	public boolean isCanGuess()
@@ -60,21 +57,6 @@ public class Player
         else if(card.getCardType() == CardType.Person)
             myNotebook.addKnownSuspects((Suspect) card.getTitle(), shower);
     }
-
-//    public void addToNotebook(Suspect shown, Suspect shower)
-//    {
-//        myNotebook.addKnownSuspects(shown, shower);
-//    }
-//
-//    public void addToNotebook(Weapon w, Suspect shower)
-//    {
-//        myNotebook.addKnownWeapon(w, shower);
-//    }
-//
-//    public void addToNotebook(Room r, Suspect shower)
-//    {
-//        myNotebook.addKnownRooms(r, shower);
-//    }
 
     public Suspect[] getNotebookSuspect()
     {
