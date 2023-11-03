@@ -13,6 +13,7 @@ public class Notebook
 
     public Notebook(ArrayList<Card> cards, Suspect me)
     {
+        System.out.println();
         for(Card x : cards)
         {
             CardOptions co = x.getTitle();
