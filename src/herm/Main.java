@@ -10,6 +10,7 @@ public class Main {
         Scanner input = new Scanner(System.in);
 
         String response = "";
+        System.out.println("Hello!!");
         while(!response.equalsIgnoreCase("N"))
         {
             System.out.print("Hello! Welcome to Clue\n" +
