@@ -20,6 +20,7 @@ public enum Room implements CardOptions {
 		printName = n;
 		passageExit = exit;
 		representChar = c;
+		System.out.println("Bob");
 	}
 
 	public String getRepresentChar()
